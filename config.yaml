@@ -1,2 +1,70 @@
 genaitor-repo: https://github.com/enterpriselm/genaitor.git
-api-key: AIzaSyBRYYxer1Q9ZSsO1TjXWzRoy6_Kfl5SrAo
+api-key: AIzaSyDtxoX32nZ9pzbmYVgLbDGcxmzxs78cWGg
+agents:
+  answer_question_agent:
+    description: "Generate a concise answer based on retrieved documents and a question, refining based on feedback."
+    goal: "Provide an accurate and complete answer using only the provided context."
+    prompt_template: |
+      You are a knowledgeable assistant.
+
+      **Task**: {description}
+      **Goal**: {goal}
+
+      User Question: {query}
+      Context: {context}
+      {previous_answer_section}
+      {feedback_section}
+
+      Using the context provided, generate a complete, accurate, and concise answer to the user question.
+      If a previous answer and feedback are provided, refine the previous answer based on the feedback.
+      Do not rely on external knowledge — only use the context.
+
+      ### Output Format
+      {output_format}
+
+  evaluate_answer_agent:
+    description: "Evaluate the accuracy, relevance, and completeness of a generated answer."
+    goal: "Provide a structured evaluation of the generated answer against the original question and context."
+    output_format: |
+      {
+        "accuracy": "0-10",
+        "relevance": "0-10",
+        "completeness": "0-10",
+        "conciseness": "0-10",
+        "hallucinations": "Yes/No",
+        "suggested_improvements": "string"
+      }
+    prompt_template: |
+      You are an expert evaluator of answers based on given context.
+
+      **Task**: {description}
+      **Goal**: {goal}
+
+      User Question: {query}
+      Context: {context}
+      Generated Answer: {generated_answer}
+
+      Evaluate the provided answer based solely on the context and the user’s question. Determine if the answer is complete, accurate, relevant, and aligned with the context.
+
+      ### Output Format
+      {output_format}
+
+  suggest_improvement_agent:
+    description: "Suggest improvements for an underperforming answer."
+    goal: "Provide a significantly improved version of an answer based on evaluation feedback."
+    output_format: "A significantly improved version of the answer." # This is just a general description, the actual output will be the improved text
+    prompt_template: |
+      You are a skilled assistant improving model-generated answers.
+
+      **Task**: {description}
+      **Goal**: {goal}
+
+      User Question: {query}
+      Context: {context}
+      Underperforming Answer: {generated_answer}
+      Evaluation Feedback: {evaluation_feedback}
+
+      Given a user question, context, an underperforming answer, and evaluation feedback, suggest a significantly improved version that is more accurate, clear, and aligned with the context.
+
+      ### Output Format
+      {output_format}
